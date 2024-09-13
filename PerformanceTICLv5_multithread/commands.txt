@@ -1,0 +1,12 @@
+
+# In Container
+export PYTHONPATH="/workspaces/repo/:$PYTHONPATH"
+
+cd /workspaces/repo/scratch/analyzer-test
+python -m analyzer.driver.makeAllDataframe -i /workspaces/repo/runs/AlessandroElectronSamples/histo.root -o . 
+
+# On llruicms
+module load python
+export PYTHONPATH="/home/llr/cms/cuisset/hgcal/supercls/repoForJobs/:$PYTHONPATH"
+
+python -m analyzer.driver.makeAllDataframe -i /data_cms_upgrade/cuisset/supercls/alessandro_electrons/supercls-v1 -o /data_cms_upgrade/cuisset/supercls/alessandro_electrons/supercls-v1/store-v1

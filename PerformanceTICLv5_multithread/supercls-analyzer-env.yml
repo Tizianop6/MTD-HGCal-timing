@@ -1,0 +1,23 @@
+name: supercls-analyzer
+channels:
+ - conda-forge
+ - nodefaults
+dependencies:
+ - python>=3.10
+ - ipykernel
+ - numpy
+ - scipy
+ - uproot=5.*
+ - awkward=2.*
+ - pandas=2.*
+ - pytables # for pandas to hdf5
+ - hist
+ - tqdm
+ - ipykernel # notebooks
+ - ipywidgets # to use tqdm in notebooks
+ - matplotlib>=3
+ - mplhep>=0.3 # plotting CMS style
+ - pip
+ - pip:
+   - git+https://github.com/cms-ml/cmsml # installing from pypi does not work (don't know why)
+   - awkward-pandas

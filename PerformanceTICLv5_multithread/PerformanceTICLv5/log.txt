@@ -1,0 +1,39 @@
+/cvmfs/cms.cern.ch/el9_amd64_gcc12/external/py3-numpy/1.24.3-ac08ea497df571aa0b37dc29bb7a2045/lib/python3.9/site-packages/numpy/core/getlimits.py:518: UserWarning: The value of the smallest subnormal for <class 'numpy.float64'> type is zero.
+  setattr(self, word, getattr(machar, word).flat[0])
+/cvmfs/cms.cern.ch/el9_amd64_gcc12/external/py3-numpy/1.24.3-ac08ea497df571aa0b37dc29bb7a2045/lib/python3.9/site-packages/numpy/core/getlimits.py:89: UserWarning: The value of the smallest subnormal for <class 'numpy.float64'> type is zero.
+  return self._float_to_str(self.smallest_subnormal)
+/cvmfs/cms.cern.ch/el9_amd64_gcc12/external/py3-numpy/1.24.3-ac08ea497df571aa0b37dc29bb7a2045/lib/python3.9/site-packages/numpy/core/getlimits.py:518: UserWarning: The value of the smallest subnormal for <class 'numpy.float32'> type is zero.
+  setattr(self, word, getattr(machar, word).flat[0])
+/cvmfs/cms.cern.ch/el9_amd64_gcc12/external/py3-numpy/1.24.3-ac08ea497df571aa0b37dc29bb7a2045/lib/python3.9/site-packages/numpy/core/getlimits.py:89: UserWarning: The value of the smallest subnormal for <class 'numpy.float32'> type is zero.
+  return self._float_to_str(self.smallest_subnormal)
+2.6.3
+Directory '/eos/user/t/tipaulet/www/TimeResolution/' already exists.
+  0%|          | 0/9 [00:00<?, ?it/s] 11%|█         | 1/9 [02:19<18:32, 139.07s/it] 22%|██▏       | 2/9 [04:16<14:46, 126.58s/it] 33%|███▎      | 3/9 [06:19<12:28, 124.74s/it] 44%|████▍     | 4/9 [07:57<09:30, 114.10s/it] 56%|█████▌    | 5/9 [09:58<07:46, 116.69s/it] 67%|██████▋   | 6/9 [11:42<05:36, 112.33s/it] 78%|███████▊  | 7/9 [13:50<03:54, 117.48s/it] 89%|████████▉ | 8/9 [15:33<01:53, 113.01s/it]100%|██████████| 9/9 [17:23<00:00, 111.80s/it]100%|██████████| 9/9 [17:23<00:00, 115.90s/it]
+Info in <TCanvas::Print>: png file /eos/user/t/tipaulet/www/TimeResolution/provares.png has been created
+(100,) (100,)
+(100,) (100,)
+(100,) (100,)
+(100,) (100,)
+(100,) (100,)
+(100,) (100,)
+(100,) (100,)
+(100,) (100,)
+(100,) (100,)
+(100,) (100,)
+(100,) (100,)
+(100,) (100,)
+(100,) (100,)
+(100,) (100,)
+(100,) (100,)
+(100,) (100,)
+(100,) (100,)
+(100,) (100,)
+(100,) (100,)
+(100,) (100,)
+(100,) (100,)
+(100,) (100,)
+(100,) (100,)
+(100,) (100,)
+(100,) (100,)
+(100,) (100,)
+(100,) (100,)
