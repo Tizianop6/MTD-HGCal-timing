@@ -27,6 +27,8 @@ from utilities import *
 from tqdm import tqdm
 import os, ROOT
 import cmsstyle as CMS
+import multiprocessing
+
 
 CMS.SetExtraText("Private work (CMS simulation)")
 CMS.SetLumi("")
@@ -45,12 +47,12 @@ def create_directory(directory_path):
 fileV5 = "/eos/user/t/tipaulet/Local_Energy_Samples/SinglePionTiming_1p9_50GeV/histo/"
 # fileV4 = "/eos/cms/store/group/dpg_hgcal/comm_hgcal/wredjeb/TICLv5Performance/TimeResolution/SinglePionTiming_2p2_100GeV/histo/"
 
-OutputDir = "/eos/user/t/tipaulet/www/TimeResolution/"
+OutputDir = "/eos/user/t/tipaulet/www/prova1/"
 
 create_directory(OutputDir)
 
 #@njit(parallel=True)
-def ReadFileAndFit(filename,tag="prova",eta=1.9, maxfiles=1):
+def ReadFileAndFit(filename,return_dict,key,tag="prova",eta=1.9, maxfiles=1):
 
 
     dumperInputV5 = DumperInputManager([
@@ -80,24 +82,23 @@ def ReadFileAndFit(filename,tag="prova",eta=1.9, maxfiles=1):
             simCandEv = simCands[ev]
             assEv = ass[ev]
             simEv = sims[ev]
-            tracksEv = tracks[ev]
+            #tracksEv = tracks[ev]
+            #print(tracksEv)
             for simCand_idx in range(len(simCandEv.simTICLCandidate_raw_energy)):
                 simRawEnergy = simCandEv.simTICLCandidate_raw_energy[simCand_idx]
                 simRegrEnergy = simCandEv.simTICLCandidate_regressed_energy[simCand_idx]
                 simTime = simCandEv.simTICLCandidate_time[simCand_idx]
-                
                 simTrack = simCandEv.simTICLCandidate_track_in_candidate[simCand_idx]
-
-
-
+                '''
                 tk_idx_in_coll = -1
                 try:
                     tk_idx_in_coll = np.where(tracksEv.track_id == simTrack)[0][0] 
                 except:
                     continue
+                
                 if tk_idx_in_coll == -1 or tracksEv.track_pt[tk_idx_in_coll] < 1 or tracksEv.track_missing_outer_hits[tk_idx_in_coll] > 5 or not tracksEv.track_quality[tk_idx_in_coll]: 
                     continue
-                    
+                ''' 
                 simToReco = assEv.ticlCandidate_simToReco_CP[simCand_idx]
                 sharedE = assEv.ticlCandidate_simToReco_CP_sharedE[simCand_idx]
                 score = assEv.ticlCandidate_simToReco_CP_score[simCand_idx]
@@ -124,7 +125,10 @@ def ReadFileAndFit(filename,tag="prova",eta=1.9, maxfiles=1):
 
                 candidate_time = candEv.candidate_time[cand_idx]
                 candidate_timeErr= candEv.candidate_timeErr[cand_idx]
-                
+                track_in_cand=candEv.track_in_candidate[cand_idx]
+                #print(track_in_cand)
+                if track_in_cand==-1:
+                    continue
                 candidate_time_MTD = candEv.candidate_time_MTD[cand_idx]
                 candidate_time_MTDErr= candEv.candidate_time_MTD_err[cand_idx]
         
@@ -225,7 +229,6 @@ def ReadFileAndFit(filename,tag="prova",eta=1.9, maxfiles=1):
 
     res=(fitres[0][0].params.sigmaL+fitres[0][0].params.sigmaR)/2
     cov_matrix=fitres[0][0].covMatrix
-    print(fitres[0][0])
     resErr=math.sqrt(0.25*(cov_matrix[2][2]+cov_matrix[3][3])+ 0.5*cov_matrix[2][3])
     resAndErrs["avg"]=[res,resErr]
 
@@ -242,10 +245,9 @@ def ReadFileAndFit(filename,tag="prova",eta=1.9, maxfiles=1):
     resErr=math.sqrt(0.25*(cov_matrix[2][2]+cov_matrix[3][3])+ 0.5*cov_matrix[2][3])
     resAndErrs["hgcal"]=[res,resErr]
     
-
+    return_dict[key]=resAndErrs
     
-
-    return (resAndErrs)
+    #return (resAndErrs)
 
 #plot_ratio_single(numerator, denominator, 10, [1,200], label1="TICLv5", xlabel="Sim Regressend Energy [GeV]", saveFileName=OutputDir + "trackEff_v5.png")
 
@@ -356,38 +358,61 @@ if __name__ == "__main__":
     manager = multiprocessing.Manager()
     return_dict = manager.dict()
     jobs = [] 
-    
+
     eta=1.9
-    for i in tqdm(prange(len(folders_1p9))):
+    maxfiles=50
+    
+
+    for i in tqdm(range(len(folders_1p9))):
         file_name="/eos/user/t/tipaulet/Local_Energy_Samples/"+folders_1p9[i]+"/histo/"
         match = re.search(r'(\d+)GeV', folders_1p9[i])
-        dict_resolutions[int(match.group(1))]=ReadFileAndFit(file_name,folders_1p9[i],maxfiles=2,eta=eta)
 
+        p = multiprocessing.Process(target=ReadFileAndFit, args=(file_name,return_dict,int(match.group(1)),folders_1p9[i],eta,maxfiles))
+        jobs.append(p)
+        p.start()
+
+        
+    for proc in jobs:
+        proc.join()
+    
+    print(return_dict)
+
+    dict_resolutions=return_dict
 
     PlotRes(dict_resolutions,tag="pT",eta=eta)
+
 
 
 
     dict_resolutions={}
 
-
+    
     folders_2p2 = ["SinglePionTiming_2p2_100GeV", "SinglePionTiming_2p2_10GeV",
      "SinglePionTiming_2p2_15GeV", "SinglePionTiming_2p2_2GeV",
      "SinglePionTiming_2p2_30GeV", "SinglePionTiming_2p2_4GeV",
      "SinglePionTiming_2p2_50GeV", "SinglePionTiming_2p2_6GeV",
      "SinglePionTiming_2p2_8GeV"]
-
+     
 
 
 
     eta=2.2
+    maxfiles=50
     for i in tqdm(prange(len(folders_2p2))):
         file_name="/eos/user/t/tipaulet/Local_Energy_Samples/"+folders_2p2[i]+"/histo/"
         match = re.search(r'(\d+)GeV', folders_2p2[i])
-        dict_resolutions[int(match.group(1))]=ReadFileAndFit(file_name,folders_2p2[i],maxfiles=2,eta=eta)
+        p = multiprocessing.Process(target=ReadFileAndFit, args=(file_name,return_dict,int(match.group(1)),folders_2p2[i],eta,maxfiles))
+        jobs.append(p)
+        p.start()
 
+    for proc in jobs:
+        proc.join()
+    
+    print(return_dict)
 
-
+    dict_resolutions=return_dict
 
 
     PlotRes(dict_resolutions,tag="pT",eta=eta)
+    
+

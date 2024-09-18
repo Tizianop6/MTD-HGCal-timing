@@ -52,6 +52,10 @@ def cruijff(x, A, m, sigmaL,sigmaR, alphaL, alphaR):
     f = 2*sigma*sigma + alpha*dx*dx
     return A* np.exp(-dx*dx/f)
 
+def gauss(x, A, mu, sigma):
+    return A * np.exp(-(x - mu)**2 / (2 * sigma**2))
+
+
 def histogram_quantiles(h:hist.Hist, quantiles):
     """ Compute quantiles from histogram. Quantiles should be a float (or array of floats) representing the requested quantiles (in [0, 1])
     Returns array of quantile values
@@ -170,6 +174,50 @@ def fitMultiHistogram(h:list[hist.Hist], sigmaEff:bool=False) -> list[list[Cruij
         fitR, sEff = fitCruijff(h_1d)#, sigmaEff)
         res[-1] = fitR
         sigmasEff[-1] = sEff
+    return (res, sigmasEff)
+
+
+def fitMultiHistogramGaussian(h:list[hist.Hist], sigmaEff:bool=False) -> list[list[CruijffFitResult]]:
+    """ Cruijff fit of multi-dimensional histogram of Supercluster/CaloParticle energy """
+    res = []
+    sigmasEff = []
+#     for eta_bin in range(len(h[0].axes["absSeedEta"])):
+
+    for i in range(len(h)):
+        h_1d = h[i]
+        res.append([])
+        sigmasEff.append([])
+#         for seedPt_bin in range(len(h)):
+#             print(eta_bin, seedPt_bin)
+#             h_1d = h[seedPt_bin][{"absSeedEta":eta_bin, "seedPt":0}]
+        fitR, sEff = fitCruijff(h_1d)#, sigmaEff)
+        res[-1] = fitR
+        sigmasEff[-1] = sEff
+    return (res, sigmasEff)
+
+
+
+def fitMultiHistogramAlsoEmptyHistos(h:list[hist.Hist], sigmaEff:bool=False) -> list[list[CruijffFitResult]]:
+    """ Cruijff fit of multi-dimensional histogram of Supercluster/CaloParticle energy """
+    res = []
+    sigmasEff = []
+#     for eta_bin in range(len(h[0].axes["absSeedEta"])):
+
+    for i in range(len(h)):
+        h_1d = h[i]
+        res.append([])
+        sigmasEff.append([])
+#         for seedPt_bin in range(len(h)):
+#             print(eta_bin, seedPt_bin)
+#             h_1d = h[seedPt_bin][{"absSeedEta":eta_bin, "seedPt":0}]
+        try:
+
+            fitR, sEff = fitCruijff(h_1d)#, sigmaEff)
+            res[-1] = fitR
+            sigmasEff[-1] = sEff
+        except ZeroDivisionError: 
+            res[-1] = -1.
+            sigmasEff[-1] = 0.
     return (res, sigmasEff)
 
 def plotSingleHistWithFit(h_1d:hist.Hist, fitRes:CruijffFitResult, ax=None):

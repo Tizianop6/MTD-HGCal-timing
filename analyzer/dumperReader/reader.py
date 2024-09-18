@@ -117,10 +117,20 @@ class DumperReader:
 
     @cached_property
     def simTrackstersCP(self) -> ak.Array:
-        return self.fileDir["simtrackstersCP"].arrays(filter_name=["event_", "raw_energy", "raw_energy_em", "regressed_energy", "barycenter_*"])
+        return self.fileDir["simtrackstersCP"].arrays(filter_name=["event_", "raw_energy", "raw_energy_em", "regressed_energy","regressed_pt", "barycenter_*",'trackIdx'])
     @cached_property
     def simTrackstersCP_df(self) -> pd.DataFrame:
         return ak.to_dataframe(self.simTrackstersCP, levelname=lambda x : {0:"eventInternal", 1:"caloparticle_id"}[x])
+
+
+
+    @cached_property
+    def simTrackstersSC(self) -> ak.Array:
+        return self.fileDir["simtrackstersSC"].arrays(filter_name=["event_", "raw_energy", "raw_energy_em", "regressed_energy","regressed_pt", "barycenter_*",'trackIdx'])
+    @cached_property
+    def simTrackstersSC_df(self) -> pd.DataFrame:
+        return ak.to_dataframe(self.simTrackstersSC, levelname=lambda x : {0:"eventInternal", 1:"caloparticle_id"}[x])
+
 
     @cached_property
     def superclusters(self) -> ak.Array:
